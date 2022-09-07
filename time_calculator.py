@@ -1,4 +1,7 @@
 def add_time(start, duration, day=False):
+    # print("Start time:", start)
+    # print("Duration:", duration)
+    # print("Day:", day)
   
     hours, mins = start.split(":")
     mins, day_time = mins.split(" ")
@@ -21,10 +24,11 @@ def add_time(start, duration, day=False):
 
   # If there was a duration - calculate the passage of time
     days_later = 0
-    if day_time == "pm" and total_hours > 12:
+    if duration_hours or duration_mins:
+      if day_time == "pm" and total_hours > 12:
       # Changing to another day if start time is pm
-      if total_hours % 24 >= 1.0:
-        days_later += 1  
+        if total_hours % 24 >= 1.0:
+          days_later += 1  
               
       if total_hours >= 12:
         hours_left = total_hours / 24
@@ -47,4 +51,35 @@ def add_time(start, duration, day=False):
     # Format the resulting time 
     result = f'{remaining_hours}:{remaining_mins:02} {day_time.upper()}'
 
-    print(result)
+
+    # Deal with days
+    week_day =  [
+        'monday', 'tuesday',
+        'wednesday', 'thursday',
+        'friday', 'saturday',
+        'sunday'
+      ]
+  
+    if day: 
+        day = day.strip().lower()
+        starting_day_index = week_day.index(day)
+        new_day_index = int((starting_day_index + days_later) % 7)
+        new_day = week_day[new_day_index]
+        if days_later == 1:
+          days_later_tag = "(next day)"
+          result = result + f', {new_day.title()} {days_later_tag}'
+        elif days_later > 1:
+          days_later_tag = f"({days_later} days later)"
+          result = result + f', {new_day.title()} {days_later_tag}'
+        elif days_later == 0:
+          result = result + f', {new_day.title()}'
+    else: 
+        if days_later == 1:
+          days_later_tag = "(next day)"
+          result = result + " " + days_later_tag
+        elif days_later > 1:
+          days_later_tag = f"({days_later} days later)"
+          result = result + " " + days_later_tag
+          
+    # print(result.strip())
+    return result.strip()
